@@ -1,6 +1,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var utils = require('./utils'),
-    dom = require('./dom');
+    dom = require('./dom'),
+    css = require('./css');
 
 var DOM = function(selector) {
     this.selector = selector || null;
@@ -35,6 +36,10 @@ DOM.prototype.map = function(cb){
 	})
 }
 
+
+/*
+* Interface
+*/
 var tinyJquery = function(selector) {
     var el;
 
@@ -46,7 +51,7 @@ var tinyJquery = function(selector) {
         el = new DOM(selector);
         el.init();
     }
-    _init(dom);
+    _init(dom, css);
     return el;
 };
 
@@ -54,7 +59,85 @@ var tinyJquery = function(selector) {
 
 module.exports = tinyJquery;
 
-},{"./dom":2,"./utils":3}],2:[function(require,module,exports){
+},{"./css":2,"./dom":3,"./utils":4}],2:[function(require,module,exports){
+var utils = require('./utils');
+
+var css = {
+	css: function(attr, value){
+		var self = this;
+		/*当参数为一个对象的时候*/
+		if(arguments.length == 1 && typeof arguments[0] == 'object'){
+			return utils.objMap(arguments[0], function(attr, value){
+				return self.css(attr, value);
+			})
+		}
+		if(value){
+			this.element.style[attr] = value;
+		}else if(attr){
+			return getComputedStyle(this.element)[attr];
+		}else{
+			return this.element.style;
+		}
+	},
+	height: function(){
+		return this.element.offsetHeight;
+	},
+	/*innerHeight but no border*/
+	innerHeight: function(){
+		var el = this.element;
+		var height = el.offsetHeight;
+		var style = getComputedStyle(el);
+
+		height -= (parseInt(style.borderTop) + parseInt(style.borderBottom));
+		return height;
+	},
+	/*outerHeight with margin*/
+	outerHeight: function(){
+		var el = this.element;
+		var height = el.offsetHeight;
+		var style = getComputedStyle(el);
+
+		height += parseInt(style.marginTop) + parseInt(style.marginBottom);
+		return height;
+	},
+	width: function(){
+		return this.element.width;
+	},
+	/*outerHeight with margin*/
+	outerWidth: function(){
+		var el = this.element;
+		var width = el.offsetWidth;
+		var style = getComputedStyle(el);
+
+		width += parseInt(style.marginLeft) + parseInt(style.marginRight);
+		return width;
+	},
+	position: function(){
+		var el = this.element;
+		return {
+			left: el.offsetLeft,
+			top: el.offsetTop
+		}
+	},
+	/*postion relative to viewport*/
+	viewportPostion: function(){
+		var el = this.element;
+		var p = el.getBoundingClientRect();
+		return {
+			top: p.top,
+			left: p.left
+		}
+	},
+	scrollTop: function(){
+		return this.position().top;
+	},
+	scrollLeft: function(){
+		return this.position().left;
+	}
+}
+
+module.exports = css;
+},{"./utils":4}],3:[function(require,module,exports){
 var utils = require('./utils');
 
 var dom = {
@@ -136,11 +219,34 @@ var dom = {
 
         return this;
     },
+    toggleClass: function(className){
+        var el = this.element;
+        el.className = ' ' + el.className + ' ';
+        if (el.className.indexOf(' ' + className + ' ') !== -1) {
+            this.removeClass(className);
+        } else {
+            el.className += className;
+        }
+        return this;
+    },
+    hasClass: function(className){
+        var el = this.element;
+        el.className = ' ' + el.className + ' ';
+        if (el.className.indexOf(' ' + className + ' ') !== -1) {
+            return true;
+        } else {
+            return false;
+        }
+    },
     /*
-     * property setting
+     * attribute
      */
     attr: function(prop, value) {
-        this.element.setAttribute(prop, value);
+        if(value){
+            this.element.setAttribute(prop, value);
+        }else if(prop){
+            this.element.getAttribute(prop);
+        }
         return this;
     },
     removeAttr: function(prop) {
@@ -162,6 +268,12 @@ var dom = {
         this.element.innerHTML = html;
 
         return this;
+    },
+    replaceWith: function(html){
+        var el = this.element;
+        if(html){
+            el.outerHTML = html;
+        }
     }
 }
 
@@ -177,7 +289,7 @@ function _fnMap(elements, fn) {
 }
 module.exports = dom;
 
-},{"./utils":3}],3:[function(require,module,exports){
+},{"./utils":4}],4:[function(require,module,exports){
 var utils = {
 	/*types*/
 	isArray: function(arr){
@@ -200,22 +312,45 @@ var utils = {
 			}
 		}
 		return child;
+	},
+	objMap: function(obj, fn){
+		if(typeof obj == 'object'){
+			return Object.keys(obj).map(function(attr){
+				return fn(attr, obj[attr]);
+			})
+		}
+	},
+	objEach: function(obj, fn){
+		if(typeof obj == 'object'){
+			Object.keys(obj).forEach(function(attr){
+				fn(attr, obj[attr]);
+			})
+		}
 	}
 }
 
 module.exports = utils;
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var $$ = require('./lib/api');
 
-console.log($$('.title'));
-console.log($$('.title').addClass('redColor'));
+// console.log($$('.title'));
+// console.log($$('.title').addClass('redColor'));
 
-console.log($$('.title').all().forEach(function(e){
-	e.addClass('bule');
-}));
+// console.log($$('.title').all().forEach(function(e){
+// 	e.addClass('bule');
+// }));
 
-$$('.title').each(function(dom){
-	console.log(dom);
-	dom.addClass('yang');
-})
-},{"./lib/api":1}]},{},[4]);
+// $$('.title').each(function(dom){
+// 	console.log(dom);
+// 	dom.addClass('yang');
+// })
+var dom = $$('.title');
+dom.css({'width': '200px', 'height': '100px', 'padding': '10px', 'border-width': '10px'});
+console.log('outerHeight', dom.outerHeight());
+console.log('Height', dom.height());
+console.log('innerHeight', dom.innerHeight());
+console.log('position', dom.position());
+console.log('viewportPostion', dom.viewportPostion());
+console.log('scrollTop', dom.scrollTop());
+console.log('css', dom.css());
+},{"./lib/api":1}]},{},[5]);
