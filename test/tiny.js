@@ -112,6 +112,7 @@ var css = {
 				return self.css(attr, value);
 			})
 		}
+
 		if(value){
 			this.element.style[attr] = value;
 		}else if(attr){
@@ -190,6 +191,21 @@ var dom = {
         var selectorType = 'querySelectorAll';
         if (selector === undefined) throw Error('element selector can not be null.');
 
+        /*window, document*/
+        if(selector === window){
+            this.element = window;
+            this.elements = [window];
+            this.dom = window;
+
+            return this;
+        }else if(selector === document){
+            this.element = document;
+            this.elements = [document];
+            this.dom = document;
+
+            return this;
+        }
+
         /*nodeList elments*/
         if ((typeof selector == 'object') && (selector.nodeType === 1 || selector.nodeType === 9)) {
             this.selector = selector.nodeName;
@@ -202,6 +218,7 @@ var dom = {
             if (matches) {
                 var nodeName = matches[0].replace('<', '').replace('>', '');
                 this.element = document.createElement(nodeName);
+                return this;
             } else if (selector.indexOf('#') === 0) {
                 selectorType = 'getElementById';
                 selector = selector.substr(1, Selector.length);
@@ -226,18 +243,33 @@ var dom = {
     },
     append: function(html) {
         this.element.innerHTML = this.element.innerHTML + html;
+        return this;
     },
     prepend: function(html) {
         this.element.innerHTML = html + this.element.innerHTML;
+        return this;
     },
     after: function(html) {
         this.element.insertAdjacentHTML('afterend', html);
+        return this;
     },
     before: function(html) {
         this.element.insertAdjacentHTML('beforebegin', html);
+        return this;
     },
     remove: function() {
         this.element.parentNode.removeChild(this.element);
+        return this;
+    },
+    /*search*/
+    first: function(){
+        return this;
+    },
+    last: function(){
+        var el = this.element;
+        var length = this.elements.length;
+        el = this.elements[length];
+        return this;
     },
     prev: function(){
         return this.element.previousElementSibling;
@@ -250,6 +282,10 @@ var dom = {
         [].filter.call(el.parentNode.children, function(child){
             return child !== el;
         })
+    },
+    children: function(){
+        var el = this.element;
+        return el.children;
     },
     /*
      * class processor
@@ -406,7 +442,19 @@ var event = {
 		var el = this.element;
 		var event = new CustomEvent(customType, {bubbles: true, cancelable: true});
 		el.dispatchEvent(event);
-	}
+	},
+    /*document ready*/
+    ready: function(fn){
+        if(this.selector === document){
+            if(document.readyState != 'loading'){
+                fn();
+            }else{
+                document.addEventListener('DOMContentLoaded', fn);
+            }
+        }else{
+            throw Error('the element must be document.');
+        }
+    }
 }
 
 module.exports = event;
@@ -424,7 +472,7 @@ var utils = {
     toArray: function(obj) {
         return [].slice.call(obj);
     },
-    extends: function(child, parent, bool) {
+    extend: function(child, parent, bool) {
         if (bool == undefined) {
             bool = false;
         }
@@ -479,7 +527,7 @@ var utils = {
     /*
      * params: {}, obj1, obj2
      */
-    extend: function(out) {
+    extends: function(out) {
         out = out || {};
         for (var i = 1; i < arguments.length; i++) {
             for (var key in arguments[i]) {
