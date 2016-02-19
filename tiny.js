@@ -1,5 +1,5 @@
-var $$ = require('./lib/api');
-
+var dom = require('./lib/api');
+global.dom = dom;
 // console.log($$('.title'));
 // console.log($$('.title').addClass('redColor'));
 
@@ -11,7 +11,7 @@ var $$ = require('./lib/api');
 // 	console.log(dom);
 // 	dom.addClass('yang');
 // })
-var dom = $$('.title');
+var dom = dom('.title');
 dom.css({'width': '200px', 'height': '100px', 'padding': '10px', 'border-width': '10px'});
 console.log('outerHeight', dom.outerHeight());
 console.log('Height', dom.height());
