@@ -9,6 +9,7 @@
 * all
 * each
 * map
+* extend
 
 ### dom
 
@@ -49,9 +50,27 @@
 ### event
 
 * on
+* once
 * off
 * trigger
-* triggerCustom
+* emit
+* ready
+* click
+* dblclick
+* mouseover
+* mouseout
+* mouseenter
+* mouseleave
+* mouseup
+* mousedown
+* focus
+* blur
+* change
+* submit
+* select
+* keydown
+* keypress
+* keyup
 
 ### ajax
 
