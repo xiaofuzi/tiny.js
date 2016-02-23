@@ -51,11 +51,50 @@ var DOM = function(selector) {
     this.element = null;
     this.elements = null;
     this.dom = null;
+
+    DOM.extend(dom, css, event, animation);
 }
 
-DOM.prototype.all = function() {
-	var self;
-	if (this.elements.length == 1) {
+
+/*
+ * 静态方法
+ */
+
+/*
+ * 提供给外部的扩展接口,扩展原型对象
+ */
+DOM.extend = function(obj) {
+    var self = this;
+
+    function _include(obj) {
+        if (obj === undefined) {
+            return this;
+        } else if (utils.isObject(obj)) {
+            utils.extend(DOM.prototype, obj);
+        } else {
+            throw Error('Invalid parameters for extend method.');
+        }
+    }
+    if (arguments.length != 1) {
+        var args = utils.toArray(arguments);
+        args.forEach(function(obj) {
+            _include(obj);
+        });
+    } else {
+        _include(arguments[0]);
+    }
+}
+
+
+
+var DomProto = DOM.prototype;
+
+/*
+ * 返回所有的实例化的子元素对象
+ */
+DomProto.all = function() {
+    var self;
+    if (this.elements.length == 1) {
         self = this;
     } else {
         self = this.elements.map(function(el) {
@@ -66,38 +105,41 @@ DOM.prototype.all = function() {
     return self;
 }
 
-DOM.prototype.each = function(cb){
-	this.all().forEach(function(el){
-		cb(el);
-	})
+/*
+ * 对所有的实例化的子元素对象进行操作
+ */
+DomProto.each = function(cb) {
+    this.all().forEach(function(el) {
+        cb(el);
+    })
+    return this;
 }
 
-
-DOM.prototype.map = function(cb){
-	return this.all().map(function(el){
-		return cb(el);
-	})
+/*
+ * 对所有的实例化的子元素对象进行操作，并返回结果
+ */
+DomProto.map = function(cb) {
+    return this.all().map(function(el) {
+        return cb(el);
+    })
 }
 
 
 /*
-* Interface
-*/
+ * Interface
+ */
 var tinyJquery = function(selector) {
     var el;
+    el = new DOM(selector);
+    el.init();
 
-    function _init() {
-        var args = utils.toArray(arguments);
-        args.forEach(function(proto) {
-            utils.extends(DOM.prototype, proto);
-        });
-        el = new DOM(selector);
-        el.init();
-    }
-    _init(dom, css, event, animation);
     return el;
 };
 
+/*
+ * inherit DomProto class
+ */
+utils.extend(tinyJquery, DOM);
 module.exports = tinyJquery;
 
 },{"./animation":1,"./css":3,"./dom":4,"./event":5,"./utils":6}],3:[function(require,module,exports){
@@ -472,6 +514,16 @@ var utils = {
     toArray: function(obj) {
         return [].slice.call(obj);
     },
+    isObject: function(obj){
+        if(utils.type(obj) === 'object'){
+            return true;
+        }else{
+            return false;
+        }
+    },
+    /*
+    * safe inherit
+    */
     extend: function(child, parent, bool) {
         if (bool == undefined) {
             bool = false;
@@ -554,25 +606,6 @@ module.exports = utils;
 (function (global){
 var dom = require('./lib/api');
 global.dom = dom;
-// console.log($$('.title'));
-// console.log($$('.title').addClass('redColor'));
 
-// console.log($$('.title').all().forEach(function(e){
-// 	e.addClass('bule');
-// }));
-
-// $$('.title').each(function(dom){
-// 	console.log(dom);
-// 	dom.addClass('yang');
-// })
-var dom = dom('.title');
-dom.css({'width': '200px', 'height': '100px', 'padding': '10px', 'border-width': '10px'});
-console.log('outerHeight', dom.outerHeight());
-console.log('Height', dom.height());
-console.log('innerHeight', dom.innerHeight());
-console.log('position', dom.position());
-console.log('viewportPostion', dom.viewportPostion());
-console.log('scrollTop', dom.scrollTop());
-console.log('css', dom.css());
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./lib/api":2}]},{},[7]);

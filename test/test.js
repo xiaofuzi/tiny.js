@@ -1,7 +1,18 @@
+dom.extend({
+	animal: function(){
+		console.log('animal');
+	}
+})
+
+console.log(dom.prototype);
+console.log(dom);
+
 var doc = dom(document);
 var win = dom(window);
 
-	var body = dom('<body>');
+var body = dom('<body>');
+var titles = dom('.title');
+console.log(titles);
 
 console.log(doc);
 console.log(win);
