@@ -3,7 +3,8 @@ var win = dom(window);
 
 var body = dom('<body>');
 var titles = dom('.title');
-
+console.log(dom);
+console.log(body);
 // console.log(titles);
 
 // console.log(doc);

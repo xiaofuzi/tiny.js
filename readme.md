@@ -47,7 +47,7 @@
 * scrollTop
 * scrollLeft
 
-### event
+### 事件(event)
 
 * on
 * once
@@ -78,13 +78,30 @@
 * post
 * get
 
-### animation
+### 动画(animation)
 
 * fadeIn
 * fadeOut
 * hide
 * show
 
+### 辅助工具(utils)
+
+* type
+* isArray
+* isObject
+* isNumber
+* isString
+* isFunc
+* toArray
+* objEach
+* objMap
+* proxy
+* extend
+* extends
+* deepExtend
+* parseHTML
+* parseJSON
 
 
 
