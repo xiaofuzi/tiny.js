@@ -1,22 +1,14 @@
-dom.extend({
-	animal: function(){
-		console.log('animal');
-	}
-})
-
-console.log(dom.prototype);
-console.log(dom);
-
 var doc = dom(document);
 var win = dom(window);
 
 var body = dom('<body>');
 var titles = dom('.title');
-console.log(titles);
 
-console.log(doc);
-console.log(win);
-console.log(body);
+// console.log(titles);
+
+// console.log(doc);
+// console.log(win);
+// console.log(body);
 
 // console.log($$('.title'));
 // console.log($$('.title').addClass('redColor'));
@@ -38,3 +30,54 @@ console.log(body);
 // console.log('viewportPostion', dom.viewportPostion());
 // console.log('scrollTop', dom.scrollTop());
 // console.log('css', dom.css());
+
+//event test
+var ul = dom('ul');
+var li = dom('li');
+var input = dom('input');
+var button = dom('button');
+
+ul.click(function(e) {
+    console.log('ul', e);
+});
+
+
+li.click(function(e) {
+    console.log('li', e);
+})
+ul.click();
+li.click();
+
+// ul.mouseover(function(e){
+// 	console.log('ul mousehover:', e);
+// })
+// ul.mouseout(function(e){
+// 	console.log('ul mouseout:', e);
+// })
+
+// ul.mouseup(function(e){
+// 	console.log('ul mouseup:', e);
+// })
+// ul.mousedown(function(e){
+// 	console.log('ul mousedown:', e);
+// })
+
+// ul.dblclick(function(e){
+// 	console.log('ul dblclick:', e);
+// })
+
+button.submit(function(e){
+	console.log(e);
+	e.preventDefault();
+	console.log('button submit:', e);
+})
+
+input.select(function(e){
+	console.log('li select:', e);
+})
+
+var a = dom('a');
+a.click(function(e){
+	e.preventDefault();
+})
+
