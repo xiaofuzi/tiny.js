@@ -1,10 +1,10 @@
-var doc = dom(document);
-var win = dom(window);
+// var doc = dom(document);
+// var win = dom(window);
 
-var body = dom('<body>');
-var titles = dom('.title');
-console.log(dom);
-console.log(body);
+// var body = dom('<body>');
+// var titles = dom('.title');
+// console.log(dom);
+// console.log(body);
 // console.log(titles);
 
 // console.log(doc);
@@ -33,21 +33,21 @@ console.log(body);
 // console.log('css', dom.css());
 
 //event test
-var ul = dom('ul');
-var li = dom('li');
-var input = dom('input');
-var button = dom('button');
+// var ul = dom('ul');
+// var li = dom('li');
+// var input = dom('input');
+// var button = dom('button');
 
-ul.click(function(e) {
-    console.log('ul', e);
-});
+// ul.click(function(e) {
+//     console.log('ul', e);
+// });
 
 
-li.click(function(e) {
-    console.log('li', e);
-})
-ul.click();
-li.click();
+// li.click(function(e) {
+//     console.log('li', e);
+// })
+// ul.click();
+// li.click();
 
 // ul.mouseover(function(e){
 // 	console.log('ul mousehover:', e);
@@ -67,18 +67,24 @@ li.click();
 // 	console.log('ul dblclick:', e);
 // })
 
-button.submit(function(e){
-	console.log(e);
-	e.preventDefault();
-	console.log('button submit:', e);
-})
+// button.submit(function(e){
+// 	console.log(e);
+// 	e.preventDefault();
+// 	console.log('button submit:', e);
+// })
 
-input.select(function(e){
-	console.log('li select:', e);
-})
+// input.select(function(e){
+// 	console.log('li select:', e);
+// })
 
-var a = dom('a');
-a.click(function(e){
-	e.preventDefault();
-})
+// var a = dom('a');
+// a.click(function(e){
+// 	e.preventDefault();
+// })
 
+list = dom('#list');
+console.log(list);
+list.append('<li>list item</li>');
+list.delegate('li', 'click', function(e){
+	console.log(e.target, 'li');
+})
